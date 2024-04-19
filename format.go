@@ -1,4 +1,4 @@
-package logconfig
+package slogconfig
 
 type LogFormat = string
 

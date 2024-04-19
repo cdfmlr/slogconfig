@@ -1,4 +1,4 @@
-package logconfig
+package slogconfig
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 )
 
 // NewHandler creates a new slog.Handler based on the configuration.
-func (c LogConfig) NewHandler() (slog.Handler, error) {
+func (c SlogConfig) NewHandler() (slog.Handler, error) {
 	handler := slog.Default().Handler()
 
 	level := new(slog.LevelVar)
@@ -57,7 +57,7 @@ func (c LogConfig) NewHandler() (slog.Handler, error) {
 //
 //	handler, _ := c.NewHandler()
 //	logger := slog.New(handler)
-func (c LogConfig) NewLogger() (*slog.Logger, error) {
+func (c SlogConfig) NewLogger() (*slog.Logger, error) {
 	handler, err := c.NewHandler()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log handler: %w", err)
@@ -74,7 +74,7 @@ func (c LogConfig) NewLogger() (*slog.Logger, error) {
 //
 //	logger, _ := c.NewLogger()
 //	slog.SetDefault(logger)
-func (c LogConfig) SetupSlogDefaultLogger() error {
+func (c SlogConfig) SetupSlogDefaultLogger() error {
 	logger, err := c.NewLogger()
 	if err != nil {
 		return fmt.Errorf("failed to create logger: %w", err)
