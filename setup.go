@@ -67,14 +67,14 @@ func (c SlogConfig) NewLogger() (*slog.Logger, error) {
 	return logger, nil
 }
 
-// SetupSlogDefaultLogger sets the default logger of the slog package to the
+// SetSlogDefault sets the default logger of the slog package to the
 // logger created based on the configuration.
 //
 // Shorthand for:
 //
 //	logger, _ := c.NewLogger()
 //	slog.SetDefault(logger)
-func (c SlogConfig) SetupSlogDefaultLogger() error {
+func (c SlogConfig) SetSlogDefault() error {
 	logger, err := c.NewLogger()
 	if err != nil {
 		return fmt.Errorf("failed to create logger: %w", err)
