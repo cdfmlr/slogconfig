@@ -35,17 +35,11 @@ func (c SlogConfig) NewHandler() (slog.Handler, error) {
 		out = f
 	}
 
-	switch c.FormatOrDefault() {
-	case LogFormatJson:
-		handler = slog.NewJSONHandler(
-			out,
-			&slog.HandlerOptions{Level: level})
-	case LogFormatText:
-		handler = slog.NewTextHandler(
-			out,
-			&slog.HandlerOptions{Level: level})
-	default:
+	format := c.FormatOrDefault()
+	if newHandler, exists := logFormatsRegister[format]; !exists {
 		return handler, fmt.Errorf("unknown log format: %s", c.Format)
+	} else {
+		handler = newHandler(out, &slog.HandlerOptions{Level: level})
 	}
 
 	return handler, nil
