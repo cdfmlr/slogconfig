@@ -10,9 +10,10 @@ import (
 // It encapsulates methods to create NewHandler and NewLogger based on the config.
 // It also supports directly SetSlogDefault.
 type SlogConfig struct {
-	Level  LogLevel  // one of "debug", "info" (default), "warn" or "error"
-	Format LogFormat // one of "text" or "json" (default), or using RegisterLogFormat to custom others.
-	Output LogOutput // one of "stderr", "stdout" (default) or "path/to/customFile.log"
+	Level     LogLevel  // one of "debug", "info" (default), "warn" or "error"
+	Format    LogFormat // one of "text" or "json" (default), or using RegisterLogFormat to custom others.
+	Output    LogOutput // one of "stderr", "stdout" (default) or "path/to/customFile.log"
+	AddSource bool      // whether to add source file and line number to log entries. Default false.
 }
 
 // LogFormat represents a kind of slog.Handler.

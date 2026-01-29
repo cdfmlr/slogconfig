@@ -7,8 +7,13 @@ import (
 	"os"
 )
 
+// Option defines a function type for customizing slog.HandlerOptions.
+type Option func(slog.HandlerOptions) slog.HandlerOptions
+
 // NewHandler creates a new slog.Handler based on the configuration.
-func (c SlogConfig) NewHandler() (slog.Handler, error) {
+//
+// It accepts optional Option functions to override or extend the default slog.HandlerOptions.
+func (c SlogConfig) NewHandler(opts ...Option) (slog.Handler, error) {
 	handler := slog.Default().Handler()
 
 	level := new(slog.LevelVar)
@@ -32,15 +37,25 @@ func (c SlogConfig) NewHandler() (slog.Handler, error) {
 		if err != nil {
 			return handler, fmt.Errorf("failed to open log file: %w", err)
 		}
+		defer f.Close()
 		out = f
 	}
 
-	format := c.EffectiveFormat()
-	if newHandler, exists := logFormatsRegister[format]; !exists {
-		return handler, fmt.Errorf("unknown log format: %s", c.Format)
-	} else {
-		handler = newHandler(out, &slog.HandlerOptions{Level: level})
+	opt := slog.HandlerOptions{
+		Level:     level,
+		AddSource: c.AddSource,
 	}
+	for _, o := range opts {
+		opt = o(opt)
+	}
+
+	format := c.EffectiveFormat()
+	newHandler, exists := logFormatsRegister[format]
+	if !exists {
+		return handler, fmt.Errorf("unknown log format: %s", c.Format)
+	}
+
+	handler = newHandler(out, &opt)
 
 	return handler, nil
 }
@@ -51,8 +66,10 @@ func (c SlogConfig) NewHandler() (slog.Handler, error) {
 //
 //	handler, _ := c.NewHandler()
 //	logger := slog.New(handler)
-func (c SlogConfig) NewLogger() (*slog.Logger, error) {
-	handler, err := c.NewHandler()
+//
+// It accepts optional Option functions to override or extend the default slog.HandlerOptions.
+func (c SlogConfig) NewLogger(opts ...Option) (*slog.Logger, error) {
+	handler, err := c.NewHandler(opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log handler: %w", err)
 	}
