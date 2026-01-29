@@ -84,8 +84,8 @@ func (c SlogConfig) NewLogger(opts ...Option) (*slog.Logger, error) {
 //
 //	logger, _ := c.NewLogger()
 //	slog.SetDefault(logger)
-func (c SlogConfig) OverrideSlogDefault() error {
-	logger, err := c.NewLogger()
+func (c SlogConfig) OverrideSlogDefault(opts ...Option) error {
+	logger, err := c.NewLogger(opts...)
 	if err != nil {
 		return fmt.Errorf("failed to create logger: %w", err)
 	}
