@@ -14,28 +14,28 @@ func (c SlogConfig) NewHandler() (slog.Handler, error) {
 	level := new(slog.LevelVar)
 
 	if err := level.UnmarshalText([]byte(
-		c.LevelOrDefault()),
+		c.EffectiveLevel()),
 	); err != nil {
 		return handler, fmt.Errorf("failed to unmarshal log level: %w", err)
 	}
 
 	out := os.Stdout
 
-	switch c.OutputOrDefault() {
+	switch c.EffectiveOutput() {
 	case LogOutputStderr:
 		out = os.Stderr
 	case LogOutputStdout:
 		out = os.Stdout
 	default:
 		log.Printf("output log to: %s", c.Output)
-		f, err := os.OpenFile(c.OutputOrDefault(), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		f, err := os.OpenFile(c.EffectiveOutput(), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			return handler, fmt.Errorf("failed to open log file: %w", err)
 		}
 		out = f
 	}
 
-	format := c.FormatOrDefault()
+	format := c.EffectiveFormat()
 	if newHandler, exists := logFormatsRegister[format]; !exists {
 		return handler, fmt.Errorf("unknown log format: %s", c.Format)
 	} else {

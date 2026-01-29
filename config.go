@@ -65,21 +65,21 @@ const (
 	LogOutputStdout LogOutput = "stdout"
 )
 
-func (c SlogConfig) LevelOrDefault() LogLevel {
+func (c SlogConfig) EffectiveLevel() LogLevel {
 	if c.Level == "" {
 		return Default.Level
 	}
 	return c.Level
 }
 
-func (c SlogConfig) FormatOrDefault() LogFormat {
+func (c SlogConfig) EffectiveFormat() LogFormat {
 	if c.Format == "" {
 		return Default.Format
 	}
 	return c.Format
 }
 
-func (c SlogConfig) OutputOrDefault() LogOutput {
+func (c SlogConfig) EffectiveOutput() LogOutput {
 	if c.Output == "" {
 		return Default.Output
 	}
