@@ -18,26 +18,25 @@ func (c SlogConfig) NewHandler(opts ...Option) (slog.Handler, error) {
 
 	level := new(slog.LevelVar)
 
-	if err := level.UnmarshalText([]byte(
-		c.EffectiveLevel()),
-	); err != nil {
+	err := level.UnmarshalText([]byte(c.ValidLevel()))
+	if err != nil {
 		return handler, fmt.Errorf("failed to unmarshal log level: %w", err)
 	}
 
 	out := os.Stdout
 
-	switch c.EffectiveOutput() {
-	case LogOutputStderr:
+	switch c.ValidOutput() {
+	case OutputStderr:
 		out = os.Stderr
-	case LogOutputStdout:
+	case OutputStdout:
 		out = os.Stdout
 	default:
 		log.Printf("output log to: %s", c.Output)
-		f, err := os.OpenFile(c.EffectiveOutput(), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		f, err := os.OpenFile(c.ValidOutput(), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			return handler, fmt.Errorf("failed to open log file: %w", err)
 		}
-		defer f.Close()
+		// defer f.Close()
 		out = f
 	}
 
@@ -49,7 +48,7 @@ func (c SlogConfig) NewHandler(opts ...Option) (slog.Handler, error) {
 		opt = o(opt)
 	}
 
-	format := c.EffectiveFormat()
+	format := c.ValidFormat()
 	newHandler, exists := logFormatsRegister[format]
 	if !exists {
 		return handler, fmt.Errorf("unknown log format: %s", c.Format)
@@ -78,14 +77,14 @@ func (c SlogConfig) NewLogger(opts ...Option) (*slog.Logger, error) {
 	return logger, nil
 }
 
-// SetSlogDefault sets the default logger of the slog package to the
+// OverrideSlogDefault sets the default logger of the slog package to the
 // logger created based on the configuration.
 //
 // Shorthand for:
 //
 //	logger, _ := c.NewLogger()
 //	slog.SetDefault(logger)
-func (c SlogConfig) SetSlogDefault() error {
+func (c SlogConfig) OverrideSlogDefault() error {
 	logger, err := c.NewLogger()
 	if err != nil {
 		return fmt.Errorf("failed to create logger: %w", err)

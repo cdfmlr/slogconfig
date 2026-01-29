@@ -31,7 +31,7 @@ func main() {
 	var cfg appConfig
 	configer.New(&cfg, configer.TOML).ReadFromFile("config.toml")
 
-	cfg.SlogConfig.SetSlogDefault()
+	cfg.SlogConfig.OverrideSlogDefault()
 	// now slog.Default() is set to a new Logger based on the config.
 }
 ```

@@ -1,7 +1,7 @@
 // Package slogconfig provides common configuration items to the std slog logger.
 //
 // It encapsulates methods to create NewHandler and NewLogger based on the config.
-// Call SetSlogDefault method to change the slog.Default() logger.
+// Call OverrideSlogDefault method to change the slog.Default() logger.
 // based on the config values.
 //
 // Works with github.com/cdfmlr/configer:
@@ -15,7 +15,7 @@
 //	    var cfg appConfig
 //	    configer.New(&cfg, configer.TOML).ReadFromFile("config.toml")
 //
-//	    cfg.SlogConfig.SetSlogDefault()
+//	    cfg.SlogConfig.OverrideSlogDefault()
 //	    // other setup...
 //	}
 //

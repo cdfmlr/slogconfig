@@ -8,22 +8,22 @@ import (
 // SlogConfig contains common configuration items to the std slog logger of your app.
 //
 // It encapsulates methods to create NewHandler and NewLogger based on the config.
-// It also supports directly SetSlogDefault.
+// It also supports directly OverrideSlogDefault.
 type SlogConfig struct {
-	Level     LogLevel  // one of "debug", "info" (default), "warn" or "error"
-	Format    LogFormat // one of "text" or "json" (default), or using RegisterLogFormat to custom others.
-	Output    LogOutput // one of "stderr", "stdout" (default) or "path/to/customFile.log"
-	AddSource bool      // whether to add source file and line number to log entries. Default false.
+	Level     Level  // one of "debug", "info" (default), "warn" or "error"
+	Format    Format // one of "text" or "json" (default), or using RegisterLogFormat to custom others.
+	Output    Output // one of "stderr", "stdout" (default) or "path/to/customFile.log"
+	AddSource bool   // whether to add source file and line number to log entries. Default false.
 }
 
-// LogFormat represents a kind of slog.Handler.
+// Format represents a kind of slog.Handler.
 //
 // A LogFormat is bind to a NewHandlerFunc.
-type LogFormat = string
+type Format = string
 
 const (
-	LogFormatText LogFormat = "text"
-	LogFormatJson LogFormat = "json"
+	FormatText Format = "text"
+	FormatJson Format = "json"
 )
 
 // NewHandlerFunc builds out a slog.Handler.
@@ -38,8 +38,8 @@ func newJsonHandler(w io.Writer, opts *slog.HandlerOptions) slog.Handler {
 }
 
 var logFormatsRegister = map[string]NewHandlerFunc{
-	LogFormatText: newTextHandler,
-	LogFormatJson: newJsonHandler,
+	FormatText: newTextHandler,
+	FormatJson: newJsonHandler,
 }
 
 // RegisterLogFormat supports custom LogFormat.
@@ -50,37 +50,37 @@ func RegisterLogFormat(name string, builder NewHandlerFunc) {
 	logFormatsRegister[name] = builder
 }
 
-type LogLevel = string
+type Level = string
 
 const (
-	LogLevelDebug LogLevel = "debug"
-	LogLevelInfo  LogLevel = "info"
-	LogLevelWarn  LogLevel = "warn"
-	LogLevelError LogLevel = "error"
+	LevelDebug Level = "debug"
+	LevelInfo  Level = "info"
+	LevelWarn  Level = "warn"
+	LevelError Level = "error"
 )
 
-type LogOutput = string
+type Output = string
 
 const (
-	LogOutputStderr LogOutput = "stderr"
-	LogOutputStdout LogOutput = "stdout"
+	OutputStderr Output = "stderr"
+	OutputStdout Output = "stdout"
 )
 
-func (c SlogConfig) EffectiveLevel() LogLevel {
+func (c SlogConfig) ValidLevel() Level {
 	if c.Level == "" {
 		return Default.Level
 	}
 	return c.Level
 }
 
-func (c SlogConfig) EffectiveFormat() LogFormat {
+func (c SlogConfig) ValidFormat() Format {
 	if c.Format == "" {
 		return Default.Format
 	}
 	return c.Format
 }
 
-func (c SlogConfig) EffectiveOutput() LogOutput {
+func (c SlogConfig) ValidOutput() Output {
 	if c.Output == "" {
 		return Default.Output
 	}

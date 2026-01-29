@@ -1,8 +1,8 @@
 package slogconfig
 
 var Default = SlogConfig{
-	Level:     LogLevelInfo,
-	Format:    LogFormatJson,
-	Output:    LogOutputStdout,
+	Level:     LevelInfo,
+	Format:    FormatJson,
+	Output:    OutputStdout,
 	AddSource: false,
 }
